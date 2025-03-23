@@ -1,19 +1,21 @@
 package schedula
 
+import "time"
+
 type Scheduler interface {
-	AddWorker() error
-	RemoveWorker() error
-	Schedule() error
+	AddWorker(workerName string, ticker time.Duration)
+	RemoveWorker(workerName string)
+	RunWorker(workerName string) error
+	StopWorker(workerName string) error
 	//RetryTask(taskID string) error
-	//CancelTask(taskID string) error
 	//GetPendingTasks() []Task
 	//MonitorWorkers() []WorkerStatus
 }
 
 type Worker interface {
-	StartWorker(workerID string) error
+	StartWorker()
 	//ExecuteTask(task Task) error
-	StopWorker(workerID string) error
-	//ReportStatus(workerID string) string
+	StopWorker()
+	ReportStatus(workerName string) string
 	//HandleFailure(task Task, err error) error
 }
