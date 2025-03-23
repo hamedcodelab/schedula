@@ -7,6 +7,7 @@ type Scheduler interface {
 	RemoveWorker(workerName string)
 	RunWorker(workerName string) error
 	StopWorker(workerName string) error
+	Working()
 	//RetryTask(taskID string) error
 	//GetPendingTasks() []Task
 	//MonitorWorkers() []WorkerStatus
@@ -16,6 +17,7 @@ type Worker interface {
 	StartWorker()
 	//ExecuteTask(task Task) error
 	StopWorker()
-	ReportStatus(workerName string) string
+	ReportStatus() string
+	SetStatus(status string)
 	//HandleFailure(task Task, err error) error
 }

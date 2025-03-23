@@ -13,17 +13,16 @@ type worker struct {
 	stop   chan bool
 }
 
-func NewWorker(name string, ticker time.Duration) Worker {
+func newWorker(name string, status string, ticker time.Duration) Worker {
 	return &worker{
 		name:   name,
 		ticker: ticker,
-		status: "New",
+		status: status,
 		stop:   make(chan bool),
 	}
 }
 
 func (s *worker) StartWorker() {
-	s.status = "Running"
 	for {
 		select {
 		case <-s.stop:
@@ -42,6 +41,10 @@ func (s *worker) StopWorker() {
 	fmt.Println(fmt.Sprintf("Worker %s Stop"), s.name)
 }
 
-func (s *worker) ReportStatus(workerName string) string {
+func (s *worker) ReportStatus() string {
 	return s.status
+}
+
+func (s *worker) SetStatus(status string) {
+	s.status = status
 }

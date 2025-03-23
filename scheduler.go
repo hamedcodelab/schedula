@@ -7,11 +7,13 @@ type scheduler struct {
 }
 
 func NewScheduler() Scheduler {
-	return &scheduler{}
+	return &scheduler{
+		workers: make(map[string]Worker),
+	}
 }
 
 func (s *scheduler) AddWorker(name string, ticker time.Duration) {
-	newW := NewWorker(name, ticker)
+	newW := newWorker(name, "New", ticker)
 	s.workers[name] = newW
 }
 
@@ -30,11 +32,16 @@ func (s *scheduler) RemoveWorker(name string) {
 }
 
 func (s *scheduler) RunWorker(name string) error {
-	go s.workers[name].StartWorker()
-	return nil
+	s.workers[name].SetStatus("Running")
 }
 
 func (s *scheduler) StopWorker(name string) error {
 	s.workers[name].StopWorker()
 	return nil
+}
+
+func (s *scheduler) Working() {
+	for {
+
+	}
 }
