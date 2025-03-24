@@ -26,11 +26,12 @@ func (s *worker) StartWorker() {
 	for {
 		select {
 		case <-s.stop:
-			fmt.Println(fmt.Sprintf("Worker %s cancelled"), s.name)
+			fmt.Println(fmt.Sprintf("Worker %s cancelled", s.name))
 			return
 		default:
-			fmt.Println(fmt.Sprintf("Worker %s Working"), s.name)
+			fmt.Println(fmt.Sprintf("Worker %s Working", s.name))
 			time.Sleep(s.ticker)
+			fmt.Println(fmt.Sprintf("Worker %s Waiting Finish", s.name))
 		}
 	}
 

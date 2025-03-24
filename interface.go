@@ -5,8 +5,8 @@ import "time"
 type Scheduler interface {
 	AddWorker(workerName string, ticker time.Duration)
 	RemoveWorker(workerName string)
-	RunWorker(workerName string) error
-	StopWorker(workerName string) error
+	RunWorker(workerName string)
+	StopWorker(workerName string)
 	Working()
 	//RetryTask(taskID string) error
 	//GetPendingTasks() []Task

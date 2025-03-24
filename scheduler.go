@@ -25,23 +25,25 @@ func (s *scheduler) RemoveWorker(name string) {
 	if s.workers[name] == nil {
 		return
 	}
-	if s.workers[name].ReportStatus(name) == "Running" {
+	if s.workers[name].ReportStatus() == "Running" {
 		return
 	}
 	delete(s.workers, name)
 }
 
-func (s *scheduler) RunWorker(name string) error {
+func (s *scheduler) RunWorker(name string) {
 	s.workers[name].SetStatus("Running")
 }
 
-func (s *scheduler) StopWorker(name string) error {
+func (s *scheduler) StopWorker(name string) {
 	s.workers[name].StopWorker()
-	return nil
+	s.workers[name].SetStatus("Stop")
 }
 
 func (s *scheduler) Working() {
-	for {
-
+	for _, w := range s.workers {
+		if w.ReportStatus() == "Running" {
+			go w.StartWorker()
+		}
 	}
 }
