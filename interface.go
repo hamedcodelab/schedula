@@ -6,7 +6,7 @@ import (
 )
 
 type Scheduler interface {
-	AddWorker(workerName string, typ WorkerSchemaType, ticker time.Duration, w Worker)
+	AddWorker(workerName string, typ WorkerType, ticker time.Duration, w Worker)
 	RunWorker(ctx context.Context, name string)
 	Stop()
 }
@@ -18,14 +18,14 @@ type Worker interface {
 
 type worker struct {
 	Worker
-	typeW   WorkerSchemaType
+	typeW   WorkerType
 	timeRun time.Duration
 	run     chan struct{}
 }
 
-type WorkerSchemaType string
+type WorkerType string
 
 const (
-	WorkerTimeTicker WorkerSchemaType = "TimeTicker"
-	WorkerTimeLess   WorkerSchemaType = "TimeLess"
+	ScheduledWorker   WorkerType = "TimeTicker"
+	EventDrivenWorker WorkerType = "TimeLess"
 )

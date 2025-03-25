@@ -21,16 +21,16 @@ func NewScheduler() Scheduler {
 	}
 }
 
-func (s *scheduler) AddWorker(name string, typ WorkerSchemaType, ticker time.Duration, w Worker) {
+func (s *scheduler) AddWorker(name string, typ WorkerType, ticker time.Duration, w Worker) {
 	switch typ {
-	case WorkerTimeTicker:
+	case ScheduledWorker:
 		s.workers[name] = worker{
 			Worker:  w,
 			typeW:   typ,
 			timeRun: ticker,
 			run:     make(chan struct{}),
 		}
-	case WorkerTimeLess:
+	case EventDrivenWorker:
 		s.workers[name] = worker{
 			Worker:  w,
 			typeW:   typ,
@@ -50,7 +50,7 @@ func (s *scheduler) RunWorker(ctx context.Context, name string) {
 	go func(w worker) {
 		defer s.wg.Done()
 		switch w.typeW {
-		case WorkerTimeTicker:
+		case ScheduledWorker:
 			ticker := time.NewTicker(w.timeRun)
 			for {
 				select {
@@ -64,7 +64,7 @@ func (s *scheduler) RunWorker(ctx context.Context, name string) {
 					w.Run(ctx)
 				}
 			}
-		case WorkerTimeLess:
+		case EventDrivenWorker:
 			for {
 				select {
 				case <-ctx.Done():

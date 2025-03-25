@@ -31,10 +31,10 @@ func (w *w2) Stop() {
 
 func main() {
 	sch := schedula.NewScheduler()
-	sch.AddWorker("w1", schedula.WorkerTimeTicker, time.Second, &w1{})
+	sch.AddWorker("w1", schedula.ScheduledWorker, time.Second, &w1{})
 	sch.RunWorker(context.Background(), "w1")
 
-	sch.AddWorker("w2", schedula.WorkerTimeLess, 0, &w2{})
+	sch.AddWorker("w2", schedula.EventDrivenWorker, 0, &w2{})
 	sch.RunWorker(context.Background(), "w2")
 
 	time.Sleep(5 * time.Second)
