@@ -1,50 +1,55 @@
 package schedula
 
-import "time"
+import (
+	"context"
+	"sync"
+	"time"
+)
 
 type scheduler struct {
-	workers map[string]Worker
+	workers map[string]worker
+	stop    chan struct{}
+	wg      sync.WaitGroup
 }
 
 func NewScheduler() Scheduler {
 	return &scheduler{
-		workers: make(map[string]Worker),
+		workers: make(map[string]worker),
 	}
 }
 
-func (s *scheduler) AddWorker(name string, ticker time.Duration, fn func() error) {
-	newW := newWorker(name, "New", ticker)
-	newW.SetTask(fn)
-	s.workers[name] = newW
+func (s *scheduler) AddWorker(name string, ticker time.Duration, w Worker) {
+	s.workers[name] = worker{
+		Worker:  w,
+		TimeRun: ticker,
+	}
 }
 
 func (s *scheduler) RemoveWorker(name string) {
-	if s.workers == nil {
-		return
-	}
-
-	if s.workers[name] == nil {
-		return
-	}
-	if s.workers[name].ReportStatus() == "Running" {
-		return
-	}
 	delete(s.workers, name)
 }
 
-func (s *scheduler) RunWorker(name string) {
-	s.workers[name].SetStatus("Running")
-}
-
-func (s *scheduler) StopWorker(name string) {
-	s.workers[name].StopWorker()
-	s.workers[name].SetStatus("Stop")
-}
-
-func (s *scheduler) Working() {
-	for _, w := range s.workers {
-		if w.ReportStatus() == "Running" {
-			go w.StartWorker()
+func (s *scheduler) RunWorker(ctx context.Context, name string) {
+	s.wg.Add(1)
+	go func(w worker) {
+		ticker := time.NewTicker(w.TimeRun)
+		defer s.wg.Done()
+		for {
+			select {
+			case <-ctx.Done():
+				s.StopScheduler()
+				return
+			case <-s.stop:
+				s.StopScheduler()
+				return
+			case <-ticker.C:
+				s.workers[name].Run(ctx)
+			}
 		}
-	}
+	}(s.workers[name])
+}
+
+func (s *scheduler) StopScheduler() {
+	s.stop <- struct{}{}
+	s.wg.Wait()
 }

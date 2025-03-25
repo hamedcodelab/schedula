@@ -1,29 +1,28 @@
 package main
 
 import (
-	"fmt"
+	"context"
 	"github.com/hamedcodelab/schedula"
+	"log"
 	"time"
 )
 
+type w1 struct {
+}
+
+func (w *w1) Run(ctx context.Context) error {
+	log.Println(" Run w1")
+	return nil
+}
+
+func (w *w1) Stop() error {
+	log.Println("Stop w1")
+	return nil
+}
+
 func main() {
 	sch := schedula.NewScheduler()
-	sch.AddWorker("w1", time.Second, func() error {
-		fmt.Println(fmt.Sprintf("Worker %s Running", "w1"))
-		return nil
-	})
-	sch.AddWorker("w2", time.Second*30, func() error {
-		fmt.Println(fmt.Sprintf("Worker %s Running", "w2"))
-		return nil
-	})
-	sch.RunWorker("w1")
-	sch.RunWorker("w2")
-	go sch.Working()
-
-	time.Sleep(time.Minute)
-
-	sch.StopWorker("w1")
-
-	time.Sleep(time.Minute * 30)
-
+	sch.AddWorker("w1", time.Second, &w1{})
+	sch.RunWorker(context.Background(), "w1")
+	time.Sleep(20 * time.Minute)
 }

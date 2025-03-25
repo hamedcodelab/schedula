@@ -1,24 +1,20 @@
 package schedula
 
-import "time"
+import (
+	"context"
+	"time"
+)
 
 type Scheduler interface {
-	AddWorker(workerName string, ticker time.Duration, fn func() error)
+	// worker handler
+	AddWorker(workerName string, ticker time.Duration, w Worker)
 	RemoveWorker(workerName string)
-	RunWorker(workerName string)
-	StopWorker(workerName string)
-	Working()
-	//RetryTask(taskID string) error
-	//GetPendingTasks() []Task
-	//MonitorWorkers() []WorkerStatus
+	RunWorker(ctx context.Context, name string)
+	//StopWorker(workerName string)
+	StopScheduler()
 }
 
 type Worker interface {
-	StartWorker()
-	Run() error
-	SetTask(fn func() error) error
-	StopWorker()
-	ReportStatus() string
-	SetStatus(status string)
-	//HandleFailure(task Task, err error) error
+	Run(ctx context.Context) error
+	Stop() error
 }

@@ -1,69 +1,15 @@
 package schedula
 
 import (
-	"fmt"
 	"time"
 )
 
+// context
+// ticker
+// ticker := time.NewTicker(w.d)
+// run in worker
+
 type worker struct {
-	name   string
-	ticker time.Duration
-	status string
-	stop   chan bool
-	fn     func() error
-}
-
-func newWorker(name string, status string, ticker time.Duration) Worker {
-	return &worker{
-		name:   name,
-		ticker: ticker,
-		status: status,
-		stop:   make(chan bool),
-	}
-}
-
-func (s *worker) StartWorker() {
-	for {
-		select {
-		case <-s.stop:
-			fmt.Println(fmt.Sprintf("Worker %s cancelled", s.name))
-			return
-		default:
-			fmt.Println(fmt.Sprintf("Worker %s Working", s.name))
-			err := s.Run()
-			if err != nil {
-				fmt.Println(fmt.Sprintf("Worker %s Error %v", s.name), err.Error())
-			}
-			time.Sleep(s.ticker)
-			fmt.Println(fmt.Sprintf("Worker %s Waiting Finish", s.name))
-
-		}
-	}
-
-}
-
-func (s *worker) StopWorker() {
-	s.stop <- true
-	fmt.Println(fmt.Sprintf("Worker %s Stop"), s.name)
-}
-
-func (s *worker) ReportStatus() string {
-	return s.status
-}
-
-func (s *worker) SetStatus(status string) {
-	s.status = status
-}
-
-func (s *worker) SetTask(fn func() error) error {
-	s.fn = fn
-	return nil
-}
-
-func (s *worker) Run() error {
-	err := s.fn()
-	if err != nil {
-		return err
-	}
-	return nil
+	Worker
+	TimeRun time.Duration
 }
