@@ -6,8 +6,7 @@ import (
 )
 
 type worker struct {
-	name string
-	//payload interface{}
+	name   string
 	ticker time.Duration
 	status string
 	stop   chan bool

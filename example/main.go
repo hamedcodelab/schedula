@@ -20,5 +20,10 @@ func main() {
 	sch.RunWorker("w2")
 	go sch.Working()
 
+	time.Sleep(time.Minute)
+
+	sch.StopWorker("w1")
+
 	time.Sleep(time.Minute * 30)
+
 }
