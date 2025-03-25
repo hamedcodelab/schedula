@@ -10,19 +10,37 @@ import (
 type w1 struct {
 }
 
-func (w *w1) Run(ctx context.Context) error {
+func (w *w1) Run(ctx context.Context) {
 	log.Println(" Run w1")
-	return nil
 }
 
-func (w *w1) Stop() error {
+func (w *w1) Stop() {
 	log.Println("Stop w1")
-	return nil
+}
+
+type w2 struct {
+}
+
+func (w *w2) Run(ctx context.Context) {
+	log.Println(" Run w2")
+}
+
+func (w *w2) Stop() {
+	log.Println("Stop w2")
 }
 
 func main() {
 	sch := schedula.NewScheduler()
-	sch.AddWorker("w1", time.Second, &w1{})
+	sch.AddWorker("w1", schedula.WorkerTimeTicker, time.Second, &w1{})
 	sch.RunWorker(context.Background(), "w1")
+
+	sch.AddWorker("w2", schedula.WorkerTimeLess, 0, &w2{})
+	sch.RunWorker(context.Background(), "w2")
+
+	time.Sleep(5 * time.Second)
+	sch.Stop()
+	log.Println("Stop Scheduler")
+	//
+
 	time.Sleep(20 * time.Minute)
 }
