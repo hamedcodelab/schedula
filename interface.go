@@ -7,7 +7,6 @@ import (
 
 type Scheduler interface {
 	AddWorker(workerName string, typ WorkerSchemaType, ticker time.Duration, w Worker)
-	RemoveWorker(workerName string)
 	RunWorker(ctx context.Context, name string)
 	Stop()
 }

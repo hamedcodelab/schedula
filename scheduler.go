@@ -45,10 +45,6 @@ func (s *scheduler) AddWorker(name string, typ WorkerSchemaType, ticker time.Dur
 	}
 }
 
-func (s *scheduler) RemoveWorker(name string) {
-	delete(s.workers, name)
-}
-
 func (s *scheduler) RunWorker(ctx context.Context, name string) {
 	s.wg.Add(1)
 	go func(w worker) {
@@ -86,6 +82,7 @@ func (s *scheduler) RunWorker(ctx context.Context, name string) {
 }
 
 func (s *scheduler) Stop() {
-	s.stop <- struct{}{}
+	//s.stop <- struct{}{}
+	close(s.stop)
 	s.wg.Wait()
 }
