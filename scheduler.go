@@ -12,8 +12,9 @@ func NewScheduler() Scheduler {
 	}
 }
 
-func (s *scheduler) AddWorker(name string, ticker time.Duration) {
+func (s *scheduler) AddWorker(name string, ticker time.Duration, fn func() error) {
 	newW := newWorker(name, "New", ticker)
+	newW.SetTask(fn)
 	s.workers[name] = newW
 }
 

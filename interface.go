@@ -3,7 +3,7 @@ package schedula
 import "time"
 
 type Scheduler interface {
-	AddWorker(workerName string, ticker time.Duration)
+	AddWorker(workerName string, ticker time.Duration, fn func() error)
 	RemoveWorker(workerName string)
 	RunWorker(workerName string)
 	StopWorker(workerName string)
@@ -15,7 +15,8 @@ type Scheduler interface {
 
 type Worker interface {
 	StartWorker()
-	//ExecuteTask(task Task) error
+	Run() error
+	SetTask(fn func() error) error
 	StopWorker()
 	ReportStatus() string
 	SetStatus(status string)

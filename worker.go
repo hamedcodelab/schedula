@@ -11,6 +11,7 @@ type worker struct {
 	ticker time.Duration
 	status string
 	stop   chan bool
+	fn     func() error
 }
 
 func newWorker(name string, status string, ticker time.Duration) Worker {
@@ -30,8 +31,13 @@ func (s *worker) StartWorker() {
 			return
 		default:
 			fmt.Println(fmt.Sprintf("Worker %s Working", s.name))
+			err := s.Run()
+			if err != nil {
+				fmt.Println(fmt.Sprintf("Worker %s Error %v", s.name), err.Error())
+			}
 			time.Sleep(s.ticker)
 			fmt.Println(fmt.Sprintf("Worker %s Waiting Finish", s.name))
+
 		}
 	}
 
@@ -48,4 +54,17 @@ func (s *worker) ReportStatus() string {
 
 func (s *worker) SetStatus(status string) {
 	s.status = status
+}
+
+func (s *worker) SetTask(fn func() error) error {
+	s.fn = fn
+	return nil
+}
+
+func (s *worker) Run() error {
+	err := s.fn()
+	if err != nil {
+		return err
+	}
+	return nil
 }
